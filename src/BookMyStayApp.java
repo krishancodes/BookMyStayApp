@@ -1,62 +1,46 @@
 /**
  * Book My Stay Application
- * Use Case 4: Room Search & Availability Check
+ * Use Case 5: Booking Request (First-Come-First-Served)
  *
  * @author Krishan
- * @version 4.0
+ * @version 5.0
  */
 
-import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
-// Room Class
-class Room {
+// Reservation Class
+class Reservation {
+    String guestName;
     String roomType;
-    int beds;
-    double price;
 
-    public Room(String roomType, int beds, double price) {
+    public Reservation(String guestName, String roomType) {
+        this.guestName = guestName;
         this.roomType = roomType;
-        this.beds = beds;
-        this.price = price;
     }
 
-    public void displayRoomDetails() {
-        System.out.println("Room Type: " + roomType);
-        System.out.println("Beds: " + beds);
-        System.out.println("Price per night: $" + price);
+    public void displayReservation() {
+        System.out.println("Guest: " + guestName + " | Requested Room: " + roomType);
     }
 }
 
-// Inventory Class
-class RoomInventory {
-    private HashMap<String, Integer> inventory;
+// Booking Request Queue
+class BookingRequestQueue {
+    private Queue<Reservation> requestQueue;
 
-    public RoomInventory() {
-        inventory = new HashMap<>();
-        inventory.put("Single Room", 5);
-        inventory.put("Double Room", 0); // Not available
-        inventory.put("Suite Room", 2);
+    public BookingRequestQueue() {
+        requestQueue = new LinkedList<>();
     }
 
-    public int getAvailability(String roomType) {
-        return inventory.getOrDefault(roomType, 0);
+    public void addRequest(Reservation reservation) {
+        requestQueue.add(reservation);
+        System.out.println("Booking request added for " + reservation.guestName);
     }
-}
 
-// Search Service
-class RoomSearchService {
-
-    public void searchAvailableRooms(RoomInventory inventory, Room[] rooms) {
-        System.out.println("\nAvailable Rooms:\n");
-
-        for (Room room : rooms) {
-            int available = inventory.getAvailability(room.roomType);
-
-            if (available > 0) {
-                room.displayRoomDetails();
-                System.out.println("Available Rooms: " + available);
-                System.out.println("-----------------------------");
-            }
+    public void displayRequests() {
+        System.out.println("\nCurrent Booking Requests (FIFO Order):");
+        for (Reservation r : requestQueue) {
+            r.displayReservation();
         }
     }
 }
@@ -68,23 +52,21 @@ public class BookMyStayApp {
         System.out.println("=================================");
         System.out.println("        BOOK MY STAY APP         ");
         System.out.println("      Hotel Booking System       ");
-        System.out.println("           Version 4.0           ");
+        System.out.println("           Version 5.0           ");
         System.out.println("=================================");
 
-        // Create room objects
-        Room single = new Room("Single Room", 1, 100);
-        Room doubleRoom = new Room("Double Room", 2, 180);
-        Room suite = new Room("Suite Room", 3, 300);
+        // Booking Request Queue
+        BookingRequestQueue queue = new BookingRequestQueue();
 
-        Room[] rooms = {single, doubleRoom, suite};
+        // Add booking requests
+        queue.addRequest(new Reservation("Krishan", "Single Room"));
+        queue.addRequest(new Reservation("Rahul", "Double Room"));
+        queue.addRequest(new Reservation("Anita", "Suite Room"));
 
-        // Initialize inventory
-        RoomInventory inventory = new RoomInventory();
+        // Display requests
+        queue.displayRequests();
 
-        // Search service
-        RoomSearchService searchService = new RoomSearchService();
-        searchService.searchAvailableRooms(inventory, rooms);
-
-        System.out.println("\nApplication terminated.");
+        System.out.println("\nRequests stored in arrival order. No allocation done yet.");
+        System.out.println("Application terminated.");
     }
 }
